@@ -1,4 +1,4 @@
-//alert("ok Script 2");
+alert("ok Script");
 
 //const HTMLResponse = document.querySelector("#app");
 //const API_URL = "https://misiontic2022upb.vercel.app/api/logistics";
@@ -6,14 +6,40 @@
 
 async function mostrarProductos() {
 
+
+    let productosConDepreciación = [];
+
     let response = await fetch("https://misiontic2022upb.vercel.app/api/logistics/products");
-    let productosAPI = await response.json();
+    let productosAPI = await response.json()
+        .then(producto => {
+            producto.forEach(element => {
+
+                const valoresDepreciados = calcularDepreciacionNIIF(
+                    element.precioInicial,
+                    element.precioFinal,
+                    element.vidaUtil,
+                    element.periodo_consultado
+                );
+                productosConDepreciación.push({
+                    "precioDepreciado": valoresDepreciados,
+                    "precioInicial": element.precioInicial,
+                    "precioFinal": element.precioFinal,
+                    "vidaUtil": element.vidaUtil,
+                    "periodo_consultado": element.periodo_consultado
+                })
+            });
+        });
+    //console.log(productosConDepreciación);
+    return (productosConDepreciación);
+
+    /*
     let productosConDepreciación = [];
     let precioDepreciado = [...productosAPI];
     let valoresDepreciados = new Object();
     let unionFinal = [];
     precioDepreciado.map((producto) =>{
-
+        //console.log(producto);
+           
         valoresDepreciados.precioDepreciado = calcularDepreciacionNIIF(
             producto.precioInicial,
             producto.precioFinal,
@@ -21,10 +47,16 @@ async function mostrarProductos() {
             producto.periodo_consultado
             );
         unionFinal = Object.assign(producto,valoresDepreciados);
+        //console.log("Objeto Unido");
+        //console.log(unionFinal);
         productosConDepreciación.push(unionFinal);
     });
-    //console.log(productosConDepreciación);
-    return (productosConDepreciación);
+    */
+
+    //console.log("Array Final");
+
+    //return console.log(productosConDepreciación);
+    //console.log(productosAPI);
 }
 
 async function mostrarProductosPrecioDolares() {
